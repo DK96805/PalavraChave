@@ -4,8 +4,6 @@ from docx import Document
 from openpyxl import load_workbook
 import cowsay
 
-import cowsay
-
 def show_header():
     header_text = '''
                                                                                                                                         
