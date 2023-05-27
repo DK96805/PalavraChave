@@ -2,17 +2,6 @@ import os
 import PyPDF2
 from docx import Document
 from openpyxl import load_workbook
-import cowsay
-
-def show_header():
-    header_text = '''
-                                                                                                                                        
-                                                      [v 0.0.1] BY:DK                                                                                            
-[SISTEMA DE BUSCA DE PALAVRA-CHAVE EM PASTA DE ARQUIVOS WORD, PDF E EXCEL]                                                                                                     
-                                                                                                                                             
-'''
-    cowsay.tux(header_text)
-show_header()
 
 
 def search_word_in_pdf(file_path, search_word):
