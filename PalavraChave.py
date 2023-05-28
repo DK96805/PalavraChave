@@ -3,7 +3,6 @@ import PyPDF2
 from docx import Document
 from openpyxl import load_workbook
 
-
 def search_word_in_pdf(file_path, search_word):
     with open(file_path, 'rb') as file:
         pdf = PyPDF2.PdfReader(file)
