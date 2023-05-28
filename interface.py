@@ -4,6 +4,8 @@ from docx import Document
 from openpyxl import load_workbook
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import scrolledtext
+
 
 def search_word_in_pdf(file_path, search_word, result_text):
     with open(file_path, 'rb') as file:
@@ -43,7 +45,20 @@ def search_word_in_excel(file_path, search_word, result_text):
                     result_text.insert(tk.END, f'Coluna: {column_number}\n')
                     result_text.insert(tk.END, '---\n')
 
+def show_notification():
+    notification = tk.Toplevel()
+    notification.title("Notificação")
+    notification.geometry("300x100")
+    notification_label = tk.Label(notification, text="Procurando palavras-chave...")
+    notification_label.pack(pady=30)
+    # Defina a duração desejada para a notificação em milissegundos (por exemplo, 2000 para 2 segundos)
+    duration = 2000
+    notification.after(duration, notification.destroy)
+
+
 def search_word_in_directory(directory_path, search_word, result_text):
+    no_match_found = True  # Inicialmente, consideramos que não há correspondências
+
     for root, dirs, files in os.walk(directory_path):
         for file in files:
             file_path = os.path.join(root, file)
@@ -54,10 +69,24 @@ def search_word_in_directory(directory_path, search_word, result_text):
             elif file.endswith('.xlsx'):
                 search_word_in_excel(file_path, search_word, result_text)
 
+            # Verifica se foram encontradas correspondências
+            if result_text.get("1.0", tk.END).strip():
+                no_match_found = False  # Correspondência encontrada
+
+    # Verifica se nenhuma correspondência foi encontrada
+    if no_match_found:
+        no_match_window = tk.Toplevel()
+        no_match_window.title("Aviso")
+        no_match_label = tk.Label(no_match_window, text="Nenhuma correspondência encontrada.")
+        no_match_label.pack(pady=20)
+
+
+
 def select_directory(input_entry, result_text):
     directory_path = filedialog.askdirectory()
     if directory_path:
         search_word = input_entry.get()
+        show_notification()
         result_text.delete('1.0', tk.END)  # Limpar o texto de resultados
         search_word_in_directory(directory_path, search_word, result_text)
 
@@ -66,8 +95,11 @@ def create_window():
     window.title("Palavra-CHAVE")
     window.iconbitmap('imagens/cranio-e-ossos.ico')  # Substitua pelo caminho para o seu arquivo .ico
 
-    title_label = tk.Label(window, text="Programa criado por DK96805")
+    title_label = tk.Label(window, text="Programa criado por DK96805. ")
     title_label.pack(pady=10)
+
+    title_label = tk.Label(window, text="*ATENÇÃO*, a busca deve respeitar acentos, letras MAIÚSCULAS e MINUSCULAS. ")
+    title_label.pack(pady=11)
 
     input_frame = tk.Frame(window)
     input_frame.pack(pady=10)
@@ -87,8 +119,11 @@ def create_window():
     result_label = tk.Label(result_frame, text="Resultados:")
     result_label.pack()
 
-    result_text = tk.Text(result_frame, width=60, height=15)
+    result_text = scrolledtext.ScrolledText(result_frame, width=60, height=15)
     result_text.pack()
+
+    global no_match_found
+    no_match_found = tk.BooleanVar(value=False)
 
     window.mainloop()
 
